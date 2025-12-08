@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Proyecto SGR - Código de verificación</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f2f7fb; font-family:Arial, sans-serif;">
+
+<!-- Contenedor principal -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f2f7fb; padding:40px 0;">
+    <tr>
+        <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:40px;">
+
+                <!-- Título -->
+                <tr>
+                    <td style="text-align:center; padding-bottom:25px;">
+                        <h2 style="margin:0; font-size:24px; color:#333; font-weight:bold;">Recuperación de contraseña</h2>
+                    </td>
+                </tr>
+
+                <!-- Saludo -->
+                <tr>
+                    <td style="font-size:16px; color:#555; padding-bottom:20px;">
+                        Hola <strong>${nombres}</strong>,
+                    </td>
+                </tr>
+
+                <!-- Mensaje -->
+                <tr>
+                    <td style="font-size:16px; color:#555; padding-bottom:30px;">
+                        Hemos recibido una solicitud para restablecer tu contraseña. Usa el siguiente código de verificación:
+                    </td>
+                </tr>
+
+                <!-- Código de verificación -->
+                <tr>
+                    <td align="center" style="padding:20px 0;">
+                        <span style="display:inline-block; font-size:28px; letter-spacing:6px; font-weight:bold; color:#007bff; background:#e6f0ff; padding:15px 25px; border-radius:8px;">
+                            ${token}
+                        </span>
+                    </td>
+                </tr>
+
+                <!-- Instrucciones -->
+                <tr>
+                    <td style="font-size:14px; color:#777; padding-top:25px; line-height:1.6;">
+                        Si no solicitaste este código, simplemente ignora este correo. <br>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
