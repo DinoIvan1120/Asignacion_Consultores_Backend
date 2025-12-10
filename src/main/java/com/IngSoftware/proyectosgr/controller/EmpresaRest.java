@@ -1,9 +1,6 @@
 package com.IngSoftware.proyectosgr.controller;
 
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.CreateEmpresaResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaNombreComercialResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.UpdateEmpresaResource;
+import com.IngSoftware.proyectosgr.domain.dto.Empresa.*;
 import com.IngSoftware.proyectosgr.domain.mapping.EmpresaMapper;
 import com.IngSoftware.proyectosgr.domain.model.Empresa;
 import com.IngSoftware.proyectosgr.service.EmpresaService;
@@ -161,6 +158,26 @@ public class EmpresaRest {
     public ResponseEntity<EmpresaResource> deleteEmpresa(@PathVariable Integer id) {
         Empresa empresa = empresaService.delete(id);
         EmpresaResource resource = mapper.toResource(empresa);
+        return new ResponseEntity<>(resource, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/moneda")
+    public ResponseEntity<EmpresaMonedaResource> getEmpresaWithMoneda(@PathVariable Integer id) {
+        Empresa empresa = empresaService.getByIdWithMoneda(id);
+        EmpresaMonedaResource resource = mapper.toEmpresaMonedaResource(empresa);
+        return new ResponseEntity<>(resource, HttpStatus.OK);
+    }
+
+    // 🔥 NUEVO: Endpoint para obtener empresa con país
+    @Operation(summary = "Obtener empresa con país", description = "Retorna una empresa con su información de país")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresa con país obtenida exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Empresa no encontrada")
+    })
+    @GetMapping("/{id}/pais")
+    public ResponseEntity<EmpresaPaisResource> getEmpresaWithPais(@PathVariable Integer id) {
+        Empresa empresa = empresaService.getByIdWithPaises(id);
+        EmpresaPaisResource resource = mapper.toEmpresaPaisResource(empresa);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 

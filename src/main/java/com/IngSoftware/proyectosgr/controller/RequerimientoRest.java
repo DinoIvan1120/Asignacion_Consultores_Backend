@@ -1,10 +1,13 @@
 package com.IngSoftware.proyectosgr.controller;
 
+import com.IngSoftware.proyectosgr.domain.dto.Asignacion.AsignacionResource;
 import com.IngSoftware.proyectosgr.domain.dto.Requerimiento.*;
 import com.IngSoftware.proyectosgr.domain.mapping.RequerimientoMapper;
 import com.IngSoftware.proyectosgr.domain.model.Requerimiento;
+import com.IngSoftware.proyectosgr.service.AsignacionService;
 import com.IngSoftware.proyectosgr.service.RequerimientoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,10 +34,15 @@ public class RequerimientoRest {
     @Autowired
     private RequerimientoMapper mapper;
 
+    @Autowired
+    private AsignacionService asignacionService;
+
+
     /**
      * ✅ NUEVO ENDPOINT: Búsqueda con filtros múltiples
      * Todos los parámetros son opcionales excepto la paginación
      */
+    /*
     @Operation(summary = "Buscar requerimientos con filtros",
             description = "Permite filtrar requerimientos del coordinador autenticado usando múltiples criterios opcionales")
     @ApiResponses(value = {
@@ -71,6 +79,66 @@ public class RequerimientoRest {
         );
 
         return new ResponseEntity<>(resources, HttpStatus.OK);
+    }
+     */
+
+    @Operation(summary = "Buscar requerimientos con filtros",
+            description = "Permite filtrar requerimientos del coordinador autenticado usando múltiples criterios opcionales")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Requerimientos filtrados obtenidos exitosamente")
+    })
+    @GetMapping("/search")
+    public ResponseEntity<Page<AsignacionResource>> searchRequerimientos(
+            @Parameter(description = "Fecha de inicio del requerimiento (formato: yyyy-MM-dd)", example = "2025-01-01")
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            Date fechaInicio,
+
+            @Parameter(description = "Fecha de fin del requerimiento (formato: yyyy-MM-dd)", example = "2025-12-31")
+            @RequestParam(required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            Date fechaFin,
+
+            @Parameter(description = "ID del cliente (usuario del requerimiento)", example = "123")
+            @RequestParam(required = false)
+            Integer idUsuario,
+
+            @Parameter(description = "Nombre del consultor (busca en el título del requerimiento)", example = "Juan")
+            @RequestParam(required = false)
+            String nombreConsultor,
+
+            @Parameter(description = "Id de la empresa", example = "CSTI")
+            @RequestParam(required = false)
+            Integer idEmpresa,
+
+            @Parameter(description = "Código de requeirimiento", example = "CSTI-2025-0001")
+            @RequestParam(required = false)
+            String codRequerimiento,
+
+            @Parameter(description = "Id de requeirimiento", example = "56700")
+            @RequestParam(required = false)
+            Integer idRequerimiento,
+
+            @Parameter(description = "Id de Estadorequeirimiento", example = "En ejecución")
+            @RequestParam(required = false)
+            Integer idEstadoRequerimiento,
+
+            @Parameter(description = "Parámetros de paginación (page, size, sort)", hidden = true)
+            Pageable pageable) {
+
+        Page<AsignacionResource> asignaciones = asignacionService.searchAsignacionesByFilters(
+                fechaInicio,
+                fechaFin,
+                idUsuario,
+                nombreConsultor,
+                idEmpresa,
+                codRequerimiento,
+                idRequerimiento,
+                idEstadoRequerimiento,
+                pageable
+        );
+
+        return new ResponseEntity<>(asignaciones, HttpStatus.OK);
     }
 
     @Operation(summary = "Obtener todos los requerimientos del coordinador autenticado",

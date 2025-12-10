@@ -29,4 +29,9 @@ public interface EmpresaService {
     Empresa update(Integer id, Empresa empresa);
 
     Empresa delete(Integer id);
+
+    Empresa getByIdWithMoneda(Integer id);
+
+    // 🔥 NUEVO: Obtener empresa con países
+    Empresa getByIdWithPaises(Integer id);
 }

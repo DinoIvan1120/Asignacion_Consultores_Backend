@@ -1,11 +1,9 @@
 package com.IngSoftware.proyectosgr.controller;
 
 
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaResource;
 import com.IngSoftware.proyectosgr.domain.dto.Moneda.MonedaResource;
 import com.IngSoftware.proyectosgr.domain.dto.Moneda.MonedaResourceDescription;
 import com.IngSoftware.proyectosgr.domain.mapping.MonedaMapper;
-import com.IngSoftware.proyectosgr.domain.model.Empresa;
 import com.IngSoftware.proyectosgr.domain.model.Moneda;
 import com.IngSoftware.proyectosgr.service.MonedaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +34,7 @@ public class MonedaRest {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de monedas obtenida exitosamente",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EmpresaResource.class)))
+                            schema = @Schema(implementation = MonedaResource.class)))
     })
     @GetMapping
     public ResponseEntity<List<MonedaResource>> getAllMonedas() {
@@ -50,7 +48,7 @@ public class MonedaRest {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de monedas con descripción obtenida exitosamente",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EmpresaResource.class)))
+                            schema = @Schema(implementation = MonedaResource.class)))
     })
     @GetMapping("/descripcion")
     public ResponseEntity<List<MonedaResourceDescription>> getAllMonedasDescripcion() {

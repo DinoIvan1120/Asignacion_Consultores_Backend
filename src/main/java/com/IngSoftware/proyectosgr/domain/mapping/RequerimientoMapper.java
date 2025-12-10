@@ -4,6 +4,7 @@ import com.IngSoftware.proyectosgr.config.mapping.EnhancedModelMapper;
 import com.IngSoftware.proyectosgr.domain.dto.Citizen.CitizenResource;
 import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaResource;
 import com.IngSoftware.proyectosgr.domain.dto.EstadoRequerimiento.EstadoRequerimientoResource;
+import com.IngSoftware.proyectosgr.domain.dto.Pais.PaisNombreResource;
 import com.IngSoftware.proyectosgr.domain.dto.Prioridad.PrioridadResource;
 import com.IngSoftware.proyectosgr.domain.dto.Requerimiento.CreateRequerimientoResource;
 import com.IngSoftware.proyectosgr.domain.dto.Requerimiento.RequerimientoResource;
@@ -56,6 +57,12 @@ public class RequerimientoMapper {
         if (model.getUsuario() != null) {
             CitizenResource usuarioDTO = mapper.map(model.getUsuario(), CitizenResource.class);
             resource.setUsuario(usuarioDTO);
+        }
+
+        //Pais
+        if(model.getPais() != null) {
+            PaisNombreResource paisDTO = mapper.map(model.getPais(), PaisNombreResource.class);
+            resource.setPaisNombre(paisDTO);
         }
 
         return resource;

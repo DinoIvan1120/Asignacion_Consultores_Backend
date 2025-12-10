@@ -88,6 +88,22 @@ public class AsignacionRest {
             @RequestParam(required = false)
             String nombreConsultor,
 
+            @Parameter(description = "Id de la empresa", example = "CSTI")
+            @RequestParam(required = false)
+            Integer idEmpresa,
+
+            @Parameter(description = "Código de requeirimiento", example = "CSTI-2025-0001")
+            @RequestParam(required = false)
+            String codRequerimiento,
+
+            @Parameter(description = "Id de requeirimiento", example = "56700")
+            @RequestParam(required = false)
+            Integer idRequerimiento,
+
+            @Parameter(description = "Id de Estadorequeirimiento", example = "En ejecución")
+            @RequestParam(required = false)
+            Integer idEstadoRequerimiento,
+
             @Parameter(description = "Parámetros de paginación (page, size, sort)", hidden = true)
             Pageable pageable) {
 
@@ -96,6 +112,10 @@ public class AsignacionRest {
                 fechaFin,
                 idUsuario,
                 nombreConsultor,
+                idEmpresa,
+                codRequerimiento,
+                idRequerimiento,
+                idEstadoRequerimiento,
                 pageable
         );
 

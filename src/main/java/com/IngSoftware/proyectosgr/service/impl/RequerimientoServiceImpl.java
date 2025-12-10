@@ -251,38 +251,97 @@ public class RequerimientoServiceImpl implements RequerimientoService {
             logger.warn("Empresa sin país asociado, usando Perú (173) por defecto");
         }
 
-        String prefijo = empresa.getPrefijonombrecomercial(); // Ej: "UPC", "OPI", "SYPE"
-
-        // 2. Año actual
-        int anio = LocalDate.now().getYear();
-
-        // 3. Obtener últimos códigos
-        List<String> codigos = requerimientoRepository
-                .findCodigosByEmpresaAndYear(empresa.getId(), anio);
-
-        // 4. Determinar correlativo
-        int correlativo = 1;
-        if (!codigos.isEmpty()) {
-            // Ejemplo código: "UPC-2025-0034"
-            String ultimo = codigos.get(0);
-            String[] partes = ultimo.split("-");
-            correlativo = Integer.parseInt(partes[2]) + 1;
-        }
-
-        // 5. Formatear número
-        String nroFormato = String.format("%04d", correlativo);
-
-        // Código final
-        String codigoGenerado = prefijo + "-" + anio + "-" + nroFormato;
-
+        // ============================================================
+        // 3. 🔥 GENERAR CÓDIGO ÚNICO (con verificación de duplicados)
+        // ============================================================
+        String codigoGenerado = generarCodigoUnicoParaNuevoRequerimiento(empresa);
         requerimiento.setCodRequerimiento(codigoGenerado);
 
-        logger.info("Código generado: {}", codigoGenerado);
+        logger.info("✅ Código generado para nuevo requerimiento: {}", codigoGenerado);
 
         // 6. Guardar
         Requerimiento nuevoRequerimiento = requerimientoRepository.save(requerimiento);
 
         return nuevoRequerimiento;
+    }
+
+
+    /**
+     * 🔥 Genera un código único para un NUEVO requerimiento
+     * Verifica que no exista duplicado en la base de datos
+     *
+     * @param empresa La empresa para la cual generar el código
+     * @return El código generado y verificado como único
+     */
+    private String generarCodigoUnicoParaNuevoRequerimiento(Empresa empresa) {
+        String prefijo = empresa.getPrefijonombrecomercial(); // Ej: "UPC", "CST", "CSC"
+        int anio = LocalDate.now().getYear();
+
+        // 🔥 Obtener el último código de esta empresa en el año actual
+        List<String> codigos = requerimientoRepository
+                .findUltimoCodigoByEmpresaAndYear(empresa.getId(), anio);
+
+        int correlativo = 0; // Empieza en 0 para que el primero sea 0001
+
+        if (!codigos.isEmpty()) {
+            // Si hay códigos previos, obtener el último
+            // Ejemplo: "CST-2025-0013"
+            String ultimoCodigo = codigos.get(0);
+            String[] partes = ultimoCodigo.split("-");
+
+            if (partes.length >= 3) {
+                try {
+                    correlativo = Integer.parseInt(partes[2]);
+                    logger.info("📊 Último código de empresa {} ({}): {} - Correlativo: {}",
+                            empresa.getId(), prefijo, ultimoCodigo, correlativo);
+                } catch (NumberFormatException e) {
+                    logger.error("❌ Error al parsear correlativo de: {}", ultimoCodigo, e);
+                    correlativo = 0;
+                }
+            }
+        } else {
+            logger.info("🆕 Primera vez que se crea requerimiento para empresa {} ({}) en {}, comenzando desde 0001",
+                    empresa.getId(), prefijo, anio);
+        }
+
+        // 🔥 GENERAR EL SIGUIENTE CÓDIGO ÚNICO
+        String codigoGenerado;
+        boolean codigoExiste;
+        int intentos = 0;
+        int maxIntentos = 100; // Evitar loop infinito
+
+        do {
+            correlativo++;
+            String nroFormato = String.format("%04d", correlativo);
+            codigoGenerado = prefijo + "-" + anio + "-" + nroFormato;
+
+            // ✅ Verificar si este código ya existe en la base de datos
+            codigoExiste = requerimientoRepository.existsByCodRequerimiento(codigoGenerado);
+
+            intentos++;
+
+            if (codigoExiste) {
+                logger.warn("⚠️ Código {} ya existe, intentando con siguiente correlativo (intento {}/{})",
+                        codigoGenerado, intentos, maxIntentos);
+            }
+
+        } while (codigoExiste && intentos < maxIntentos);
+
+        if (intentos >= maxIntentos) {
+            throw new RuntimeException(
+                    "❌ No se pudo generar un código único para empresa " + prefijo +
+                            " después de " + maxIntentos + " intentos");
+        }
+
+        if (intentos > 1) {
+            logger.warn("⚠️ Se necesitaron {} intentos para generar código único: {}",
+                    intentos, codigoGenerado);
+        }
+
+        logger.info("✅ Código generado para empresa {} ({}): {}",
+                empresa.getId(), prefijo, codigoGenerado);
+
+        return codigoGenerado;
     }
 
     @Override

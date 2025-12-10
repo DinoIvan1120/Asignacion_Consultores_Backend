@@ -11,7 +11,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface    RequerimientoRepository extends JpaRepository<Requerimiento, Integer> {
+public interface RequerimientoRepository extends JpaRepository<Requerimiento, Integer> {
+
+    /**
+     * 🔥 Busca el ÚLTIMO código de una empresa en un año específico
+     * SIN excluir ningún requerimiento (para obtener el correlativo real)
+     */
+    @Query("SELECT r.codRequerimiento FROM Requerimiento r " +
+            "WHERE r.idEmpresa = :idEmpresa " +
+            "AND FUNCTION('YEAR', r.fechaRegistro) = :anio " +
+            "ORDER BY r.codRequerimiento DESC")
+    List<String> findUltimoCodigoByEmpresaAndYear(
+            @Param("idEmpresa") Integer idEmpresa,
+            @Param("anio") Integer anio);
+
+    /**
+     * Verifica si un código ya existe
+     */
+    boolean existsByCodRequerimiento(String codRequerimiento);
 
     /**
      * ✅ NUEVO: Buscar todos los requerimientos del coordinador sin paginación
@@ -45,8 +62,10 @@ public interface    RequerimientoRepository extends JpaRepository<Requerimiento,
                     // ====== FILTROS CON COALESCE ======
                     "AND r.idEmpresa = COALESCE(:idEmpresa, r.idEmpresa) " +
                     "AND (COALESCE(:codRequerimiento, '') = '' OR LOWER(r.codRequerimiento) LIKE LOWER(CONCAT('%', :codRequerimiento, '%'))) " +
-                    "AND r.fechaEnvio >= COALESCE(:fechaInicio, r.fechaEnvio) " +
-                    "AND r.fechaEnvio <= COALESCE(:fechaFin, r.fechaEnvio) " +
+                    "AND CAST(r.fechaRegistro AS date) >= CAST(COALESCE(:fechaInicio, r.fechaRegistro) AS date) " +
+                    "AND CAST(r.fechaRegistro AS date) <= CAST(COALESCE(:fechaFin, r.fechaRegistro) AS date) " +
+                    //"AND r.fechaEnvio >= COALESCE(:fechaInicio, r.fechaEnvio) " +
+                    //"AND r.fechaEnvio <= COALESCE(:fechaFin, r.fechaEnvio) " +
                     "AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
                     "AND r.idRequerimiento = COALESCE(:idRequerimiento, r.idRequerimiento) " +
                     "AND r.idEstadoRequerimiento = COALESCE(:idEstadoRequerimiento, r.idEstadoRequerimiento) " +
@@ -85,8 +104,12 @@ public interface    RequerimientoRepository extends JpaRepository<Requerimiento,
                     "WHERE r.idCoordinador = :idCoordinador " +
                     "AND r.idEmpresa = COALESCE(:idEmpresa, r.idEmpresa) " +
                     "AND (COALESCE(:codRequerimiento, '') = '' OR LOWER(r.codRequerimiento) LIKE LOWER(CONCAT('%', :codRequerimiento, '%'))) " +
-                    "AND r.fechaRegistro >= COALESCE(:fechaInicio, r.fechaRegistro) " +
-                    "AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
+                    //"AND r.fechaRegistro >= COALESCE(:fechaInicio, r.fechaRegistro) " +
+                    //"AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
+                    // 🔥 POSTGRESQL: CAST en ambos lados manteniendo COALESCE
+                    // 🔥 USAR fechaEnvio Y CAST CORRECTAMENTE
+                    "AND CAST(r.fechaEnvio AS date) >= CAST(COALESCE(:fechaInicio, r.fechaEnvio) AS date) " +
+                    "AND CAST(r.fechaEnvio AS date) <= CAST(COALESCE(:fechaFin, r.fechaEnvio) AS date) " +
                     "AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
                     // En QUERY PRINCIPAL, agregar ANTES de ORDER BY:
                     "AND (COALESCE(:nombreConsultor, '') = '' OR LOWER(r.titulo) LIKE LOWER(CONCAT('%', :nombreConsultor, '%'))) " +
@@ -99,8 +122,12 @@ public interface    RequerimientoRepository extends JpaRepository<Requerimiento,
                     "WHERE r.idCoordinador = :idCoordinador " +
                     "AND r.idEmpresa = COALESCE(:idEmpresa, r.idEmpresa) " +
                     "AND (COALESCE(:codRequerimiento, '') = '' OR LOWER(r.codRequerimiento) LIKE LOWER(CONCAT('%', :codRequerimiento, '%'))) " +
-                    "AND r.fechaRegistro >= COALESCE(:fechaInicio, r.fechaRegistro) " +
-                    "AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
+                    //"AND r.fechaRegistro >= COALESCE(:fechaInicio, r.fechaRegistro) " +
+                    //"AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
+                    // 🔥 POSTGRESQL: CAST en ambos lados manteniendo COALESCE
+                    // 🔥 USAR fechaEnvio Y CAST CORRECTAMENTE
+                    "AND CAST(r.fechaEnvio AS date) >= CAST(COALESCE(:fechaInicio, r.fechaEnvio) AS date) " +
+                    "AND CAST(r.fechaEnvio AS date) <= CAST(COALESCE(:fechaFin, r.fechaEnvio) AS date) " +
                     "AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
                     "AND r.idRequerimiento = COALESCE(:idRequerimiento, r.idRequerimiento) " +
                     // En COUNT QUERY, agregar AL FINAL:

@@ -1,10 +1,7 @@
 package com.IngSoftware.proyectosgr.domain.mapping;
 
 import com.IngSoftware.proyectosgr.config.mapping.EnhancedModelMapper;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.CreateEmpresaResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaNombreComercialResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaResource;
-import com.IngSoftware.proyectosgr.domain.dto.Empresa.UpdateEmpresaResource;
+import com.IngSoftware.proyectosgr.domain.dto.Empresa.*;
 import com.IngSoftware.proyectosgr.domain.model.Empresa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,4 +42,38 @@ public class EmpresaMapper {
     public Empresa toModel(UpdateEmpresaResource resource) {
         return mapper.map(resource, Empresa.class);
     }
+
+    public EmpresaMonedaResource toEmpresaMonedaResource(Empresa model) {
+        EmpresaMonedaResource dto = new EmpresaMonedaResource();
+        dto.setIdempresa(model.getId());
+        dto.setNombreComercial(model.getNombrecomercial());
+
+        if (model.getMoneda() != null) {
+            dto.setIdmoneda(model.getMoneda().getId());
+            dto.setDescripcion(model.getMoneda().getDescripcion());
+        }
+
+        return dto;
+    }
+
+    // 🔥 NUEVO: Mapear empresa con país
+    public EmpresaPaisResource toEmpresaPaisResource(Empresa model) {
+        EmpresaPaisResource dto = new EmpresaPaisResource();
+        dto.setIdEmpresa(model.getId());
+        dto.setNombreComercial(model.getNombrecomercial());
+
+        // Obtener el primer país de la lista (o país por defecto si no hay)
+        if (model.getPaises() != null && !model.getPaises().isEmpty()) {
+            dto.setIdPais(model.getPaises().get(0).getId());
+            dto.setNombre(model.getPaises().get(0).getNombre());
+        } else {
+            // País por defecto: Perú (ID 173)
+            dto.setIdPais(173);
+            dto.setNombre("Perú");
+        }
+
+        return dto;
+    }
+
+
 }

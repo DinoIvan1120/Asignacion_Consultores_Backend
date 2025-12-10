@@ -18,7 +18,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://10.0.2.16:5554")
                 .allowedOrigins("http://localhost:5173")
-                //.allowedOrigins("http://192.168.1.2")
+                .allowedOrigins("https://proyectosgr.vercel.app")
+                .allowedOrigins("https://sgr-backend.duckdns.org")
                 .allowedOrigins("https://savelife-upc-f0dee3255ae0.herokuapp.com")
                 .allowedOrigins("http://127.0.0.1:5000")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -33,7 +34,8 @@ public class CorsConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://10.0.2.16:5554");
         config.addAllowedOrigin("http://localhost:5173");
-        //config.addAllowedOrigin("http://192.168.1.2");
+        config.addAllowedOrigin("https://proyectosgr.vercel.app");
+        config.addAllowedOrigin("https://sgr-backend.duckdns.org");
         config.addAllowedOrigin("https://savelife-upc-f0dee3255ae0.herokuapp.com");
         config.addAllowedOrigin("http://127.0.0.1:5000");
         config.addAllowedHeader("*");

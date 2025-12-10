@@ -99,4 +99,17 @@ public class EmpresaServiceImpl implements EmpresaService {
         empresaRepository.delete(empresa);
         return empresa;
     }
+
+    @Override
+    public Empresa getByIdWithMoneda(Integer id) {
+        return empresaRepository.findByIdWithMoneda(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa", "id = " + id));
+    }
+
+    // 🔥 NUEVO: Obtener empresa con países
+    @Override
+    public Empresa getByIdWithPaises(Integer id) {
+        return empresaRepository.findByIdWithPaises(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empresa", "id = " + id));
+    }
 }

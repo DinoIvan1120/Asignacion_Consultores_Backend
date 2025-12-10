@@ -3,6 +3,7 @@ package com.IngSoftware.proyectosgr.domain.dto.Requerimiento;
 import com.IngSoftware.proyectosgr.domain.dto.Citizen.CitizenResource;
 import com.IngSoftware.proyectosgr.domain.dto.Empresa.EmpresaResource;
 import com.IngSoftware.proyectosgr.domain.dto.EstadoRequerimiento.EstadoRequerimientoResource;
+import com.IngSoftware.proyectosgr.domain.dto.Pais.PaisNombreResource;
 import com.IngSoftware.proyectosgr.domain.dto.Prioridad.PrioridadResource;
 import lombok.Getter;
 import lombok.Setter;
@@ -84,4 +85,8 @@ public class RequerimientoResource {
      * Ejemplo: { "idusuario": 272, "nombres": "ANDRE", "apepaterno": "ALZAMORA" }
      */
     private CitizenResource usuario;
+
+    private PaisNombreResource paisNombre;
+
+
 }

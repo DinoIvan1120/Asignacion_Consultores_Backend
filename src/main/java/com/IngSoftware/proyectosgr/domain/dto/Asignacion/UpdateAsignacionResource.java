@@ -48,6 +48,8 @@ public class UpdateAsignacionResource {
 
         private Integer idUsuario;
 
+        private Integer idEmpresa;
+
         private String descripcionEstimacion;
 
         private String detalleAsignacion;
@@ -74,6 +76,8 @@ public class UpdateAsignacionResource {
         private Integer idusuario;
 
         private Date fechainicio;
+
+        private Integer idmoneda;
 
         private Date fechafin;
 

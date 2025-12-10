@@ -53,6 +53,10 @@ public interface AsignacionService {
             Date fechaFin,
             Integer idUsuario,
             String nombreConsultor,
+            Integer idEmpresa,
+            String codRequerimiento,
+            Integer idRequerimiento,
+            Integer idEstadoRequerimiento,
             Pageable pageable
     );
 
@@ -77,5 +81,6 @@ public interface AsignacionService {
             Date fechaFin,
             Integer idUsuario,
             String nombreConsultor
+
     );
 }

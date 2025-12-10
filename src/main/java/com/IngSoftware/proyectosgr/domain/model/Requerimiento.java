@@ -177,4 +177,9 @@ public class Requerimiento {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idsubfrente", insertable = false, updatable = false)
     private SubFrente subfrente;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pais", insertable = false, updatable = false)
+    private Pais pais;
+
 }
