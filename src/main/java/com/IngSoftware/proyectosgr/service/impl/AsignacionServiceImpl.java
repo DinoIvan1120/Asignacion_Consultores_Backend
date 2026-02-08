@@ -267,7 +267,8 @@ public class AsignacionServiceImpl implements AsignacionService {
         for (Requerimiento req : requerimientos.getContent()) {
             // Obtener actividades del requerimiento
             List<ActividadesPlanRealConsultor> actividades =
-                    actividadRepository.findByIdrequerimiento(req.getIdRequerimiento());
+                    //actividadRepository.findByIdrequerimiento(req.getIdRequerimiento());
+                    actividadRepository.findByIdrequerimientoExcludeZero(req.getIdRequerimiento());
 
             // Mapear requerimiento
             RequerimientoResource requerimientoDTO = requerimientoMapper.toResource(req);

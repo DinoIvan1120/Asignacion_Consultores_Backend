@@ -337,6 +337,7 @@ public class RequerimientoRest {
         // 4. Retornar con status 201 CREATED
         return new ResponseEntity<>(requerimientoResource, HttpStatus.CREATED);
     }
+
     @Operation(summary = "Actualizar requerimiento",
             description = "Actualiza los datos de un requerimiento existente (solo si pertenece al coordinador autenticado)")
     @ApiResponses(value = {

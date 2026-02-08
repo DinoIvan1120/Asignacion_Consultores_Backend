@@ -19,6 +19,14 @@ public interface ActividadPlanRealConsultorRepository extends JpaRepository<Acti
      */
     List<ActividadesPlanRealConsultor> findByIdrequerimiento(Integer idrequerimiento);
 
+
+    @Query("SELECT a FROM ActividadesPlanRealConsultor a " +
+            "WHERE a.idrequerimiento = :idRequerimiento " +
+            "AND a.idusuario IS NOT NULL " +   // ← AGREGAR
+            "AND a.idusuario != 0 " +          // ← AGREGAR
+            "ORDER BY a.fechainicio DESC")
+    List<ActividadesPlanRealConsultor> findByIdrequerimientoExcludeZero(@Param("idRequerimiento") Integer idrequerimiento);
+
     /**
      * Listar con paginación las actividades de un requerimiento
      */

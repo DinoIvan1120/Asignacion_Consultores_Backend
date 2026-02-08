@@ -1,6 +1,7 @@
 package com.IngSoftware.proyectosgr.service;
 
 import com.IngSoftware.proyectosgr.domain.model.Empresa;
+import com.IngSoftware.proyectosgr.domain.model.SubFrente;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,4 +35,5 @@ public interface EmpresaService {
 
     // 🔥 NUEVO: Obtener empresa con países
     Empresa getByIdWithPaises(Integer id);
+
 }

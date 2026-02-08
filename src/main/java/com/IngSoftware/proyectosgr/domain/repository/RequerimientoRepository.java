@@ -101,6 +101,8 @@ public interface RequerimientoRepository extends JpaRepository<Requerimiento, In
                     "LEFT JOIN FETCH r.empresa e " +
                     "LEFT JOIN FETCH e.moneda " +
                     "LEFT JOIN FETCH r.usuario " +
+                    // 🔥 NUEVO: JOIN con actividades para filtrar por sus fechas
+                    "LEFT JOIN ActividadesPlanRealConsultor a ON a.idrequerimiento = r.idRequerimiento " +
                     "WHERE r.idCoordinador = :idCoordinador " +
                     "AND r.idEmpresa = COALESCE(:idEmpresa, r.idEmpresa) " +
                     "AND (COALESCE(:codRequerimiento, '') = '' OR LOWER(r.codRequerimiento) LIKE LOWER(CONCAT('%', :codRequerimiento, '%'))) " +
@@ -108,10 +110,15 @@ public interface RequerimientoRepository extends JpaRepository<Requerimiento, In
                     //"AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
                     // 🔥 POSTGRESQL: CAST en ambos lados manteniendo COALESCE
                     // 🔥 USAR fechaEnvio Y CAST CORRECTAMENTE
-                    "AND CAST(r.fechaEnvio AS date) >= CAST(COALESCE(:fechaInicio, r.fechaEnvio) AS date) " +
-                    "AND CAST(r.fechaEnvio AS date) <= CAST(COALESCE(:fechaFin, r.fechaEnvio) AS date) " +
-                    "AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
+                    //"AND CAST(r.fechaRegistro AS date) >= CAST(COALESCE(:fechaInicio, r.fechaRegistro) AS date) " +
+                    //"AND CAST(r.fechaRegistro AS date) <= CAST(COALESCE(:fechaFin, r.fechaRegistro) AS date) " +
+                    //"AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
                     // En QUERY PRINCIPAL, agregar ANTES de ORDER BY:
+                    // 🔥 CAMBIO: Ahora filtra por fechas de ACTIVIDAD (a.fechainicio y a.fechafin)
+                    "AND CAST(a.fechainicio AS date) >= CAST(COALESCE(:fechaInicio, a.fechainicio) AS date) " +
+                    "AND CAST(a.fechafin AS date) <= CAST(COALESCE(:fechaFin, a.fechafin) AS date) " +
+                    // 🔥 CAMBIO: Ahora filtra por usuario de ACTIVIDAD (a.idusuario)
+                    "AND a.idusuario = COALESCE(:idUsuario, a.idusuario) " +
                     "AND (COALESCE(:nombreConsultor, '') = '' OR LOWER(r.titulo) LIKE LOWER(CONCAT('%', :nombreConsultor, '%'))) " +
                     "AND r.idRequerimiento = COALESCE(:idRequerimiento, r.idRequerimiento) " +
                     "AND r.idEstadoRequerimiento = COALESCE(:idEstadoRequerimiento, r.idEstadoRequerimiento) " +
@@ -119,6 +126,8 @@ public interface RequerimientoRepository extends JpaRepository<Requerimiento, In
 
             // ========== COUNT QUERY ==========
             countQuery = "SELECT COUNT(r) FROM Requerimiento r " +
+                    // 🔥 NUEVO: JOIN con actividades en count query también
+                    "LEFT JOIN ActividadesPlanRealConsultor a ON a.idrequerimiento = r.idRequerimiento " +
                     "WHERE r.idCoordinador = :idCoordinador " +
                     "AND r.idEmpresa = COALESCE(:idEmpresa, r.idEmpresa) " +
                     "AND (COALESCE(:codRequerimiento, '') = '' OR LOWER(r.codRequerimiento) LIKE LOWER(CONCAT('%', :codRequerimiento, '%'))) " +
@@ -126,9 +135,14 @@ public interface RequerimientoRepository extends JpaRepository<Requerimiento, In
                     //"AND r.fechaRegistro <= COALESCE(:fechaFin, r.fechaRegistro) " +
                     // 🔥 POSTGRESQL: CAST en ambos lados manteniendo COALESCE
                     // 🔥 USAR fechaEnvio Y CAST CORRECTAMENTE
-                    "AND CAST(r.fechaEnvio AS date) >= CAST(COALESCE(:fechaInicio, r.fechaEnvio) AS date) " +
-                    "AND CAST(r.fechaEnvio AS date) <= CAST(COALESCE(:fechaFin, r.fechaEnvio) AS date) " +
-                    "AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
+                    //"AND CAST(r.fechaRegistro AS date) >= CAST(COALESCE(:fechaInicio, r.fechaRegistro) AS date) " +
+                    //"AND CAST(r.fechaRegistro AS date) <= CAST(COALESCE(:fechaFin, r.fechaRegistro) AS date) " +
+                    //"AND r.idUsuario = COALESCE(:idUsuario, r.idUsuario) " +
+                    // 🔥 CAMBIO: Filtrar por fechas de ACTIVIDAD
+                    "AND CAST(a.fechainicio AS date) >= CAST(COALESCE(:fechaInicio, a.fechainicio) AS date) " +
+                    "AND CAST(a.fechafin AS date) <= CAST(COALESCE(:fechaFin, a.fechafin) AS date) " +
+                    // 🔥 CAMBIO: Filtrar por usuario de ACTIVIDAD
+                    "AND a.idusuario = COALESCE(:idUsuario, a.idusuario) " +
                     "AND r.idRequerimiento = COALESCE(:idRequerimiento, r.idRequerimiento) " +
                     // En COUNT QUERY, agregar AL FINAL:
                     "AND (COALESCE(:nombreConsultor, '') = '' OR LOWER(r.titulo) LIKE LOWER(CONCAT('%', :nombreConsultor, '%')))" +

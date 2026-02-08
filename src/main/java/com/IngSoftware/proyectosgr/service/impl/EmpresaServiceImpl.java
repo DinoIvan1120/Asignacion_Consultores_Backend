@@ -112,4 +112,6 @@ public class EmpresaServiceImpl implements EmpresaService {
         return empresaRepository.findByIdWithPaises(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Empresa", "id = " + id));
     }
+
+
 }

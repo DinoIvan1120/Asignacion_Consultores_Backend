@@ -21,7 +21,7 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Value("${IngSoftware.proyectosgr.dev-url}")
+    @Value("${IngSoftware.proyectosgr.prd-url}")
     private String apiUrl;
 
     @Bean

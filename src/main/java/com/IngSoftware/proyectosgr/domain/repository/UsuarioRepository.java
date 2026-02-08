@@ -80,5 +80,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Page<Usuario> findClientesActivosByEmpresa(@Param("idEmpresa") Integer idEmpresa, Pageable pageable);
 
 
-
 }

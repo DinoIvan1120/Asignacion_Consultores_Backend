@@ -20,6 +20,27 @@ public class ExcelExportService {
     private static final Logger logger = LoggerFactory.getLogger(ExcelExportService.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
+    private static final int MAX_CELL_LENGTH = 32767; // ✅ AGREGAR ESTA CONSTANTE
+
+
+    // ✅ AGREGAR ESTE MÉTODO
+    /**
+     * Sanitiza el valor de una celda para no exceder el límite de Excel
+     */
+    private String sanitizeCellValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return "-";
+        }
+
+        if (value.length() > MAX_CELL_LENGTH) {
+            logger.warn("Campo excede límite de Excel. Truncando de {} a {} caracteres",
+                    value.length(), MAX_CELL_LENGTH);
+            return value.substring(0, MAX_CELL_LENGTH - 50) + "... [TEXTO TRUNCADO]";
+        }
+
+        return value;
+    }
+
     /**
      * Genera un archivo Excel con todas las asignaciones y sus actividades
      *
@@ -209,18 +230,33 @@ public class ExcelExportService {
         );
 
         // Detalle Requerimiento
+        //row.createCell(colNum++).setCellValue(
+                //req.getDetalle() != null ? req.getDetalle() : "-"
+        //);
+
+        // ✅ DESPUÉS
         row.createCell(colNum++).setCellValue(
-                req.getDetalle() != null ? req.getDetalle() : "-"
+                sanitizeCellValue(req.getDetalle())
         );
 
         // Estimación
+        //row.createCell(colNum++).setCellValue(
+                //req.getDescripcionEstimacion() != null ? req.getDescripcionEstimacion() : "-"
+        //);
+
+        // ✅ DESPUÉS
         row.createCell(colNum++).setCellValue(
-                req.getDescripcionEstimacion() != null ? req.getDescripcionEstimacion() : "-"
+                sanitizeCellValue(req.getDescripcionEstimacion())
         );
 
         // Detalle Asignación
+        //row.createCell(colNum++).setCellValue(
+                //req.getDetalleAsignacion() != null ? req.getDetalleAsignacion() : "-"
+        //);
+
+        // ✅ DESPUÉS
         row.createCell(colNum++).setCellValue(
-                req.getDetalleAsignacion() != null ? req.getDetalleAsignacion() : "-"
+                sanitizeCellValue(req.getDetalleAsignacion())
         );
 
         // Orden Compra
@@ -268,8 +304,14 @@ public class ExcelExportService {
             );
 
             // Descripción Actividad
+            //row.createCell(colNum++).setCellValue(
+                    //actividad.getDescripcion() != null ? actividad.getDescripcion() : "-"
+            //);
+
+            // ✅ DESPUÉS
+            // Descripción Actividad
             row.createCell(colNum++).setCellValue(
-                    actividad.getDescripcion() != null ? actividad.getDescripcion() : "-"
+                    sanitizeCellValue(actividad.getDescripcion())
             );
 
             // Fecha Inicio Actividad
@@ -413,13 +455,46 @@ public class ExcelExportService {
 
     /**
      * Ajusta automáticamente el ancho de las columnas
-     */
+
     private void autoSizeColumns(Sheet sheet, int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
             sheet.autoSizeColumn(i);
             // Agregar un poco más de espacio
             int currentWidth = sheet.getColumnWidth(i);
             sheet.setColumnWidth(i, currentWidth + 1000);
+        }
+    }
+     */
+
+    private void autoSizeColumns(Sheet sheet, int numberOfColumns) {
+        // Ancho máximo permitido por Excel (en unidades de 1/256 de carácter)
+        final int MAX_COLUMN_WIDTH = 255 * 256;  // 255 caracteres
+        // Ancho razonable para columnas de texto largo (100 caracteres)
+        final int REASONABLE_WIDTH = 100 * 256;
+
+        for (int i = 0; i < numberOfColumns; i++) {
+            try {
+                sheet.autoSizeColumn(i);
+
+                // Obtener el ancho calculado
+                int currentWidth = sheet.getColumnWidth(i);
+
+                // Agregar un poco más de espacio
+                int newWidth = currentWidth + 1000;
+
+                // Limitar al ancho máximo permitido
+                if (newWidth > MAX_COLUMN_WIDTH) {
+                    newWidth = REASONABLE_WIDTH;  // Usar un ancho razonable
+                    logger.warn("Columna {} excede ancho máximo. Limitando a {} caracteres", i, 100);
+                }
+
+                sheet.setColumnWidth(i, newWidth);
+
+            } catch (IllegalArgumentException e) {
+                // Si falla, establecer un ancho por defecto
+                logger.warn("Error al ajustar columna {}. Usando ancho por defecto: {}", i, e.getMessage());
+                sheet.setColumnWidth(i, REASONABLE_WIDTH);
+            }
         }
     }
 

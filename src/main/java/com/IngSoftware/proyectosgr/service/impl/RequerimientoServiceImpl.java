@@ -232,6 +232,10 @@ public class RequerimientoServiceImpl implements RequerimientoService {
             requerimiento.setFechaRequerimiento(new Date());
         }
 
+        if(requerimiento.getIdSubfrente() == null){
+            requerimiento.setIdSubfrente(83);
+        }
+
         // ============================================================
         // 1. Obtener empresa UNA SOLA VEZ (trae TODO: países + prefijo + demás datos)
         // ============================================================
